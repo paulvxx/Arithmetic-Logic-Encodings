@@ -5,8 +5,10 @@ More specifically (To be completed), this project serves as an implementation fo
 
 For example, one might wish to convert the program:
 
-x = n (any number)
-s = 0
+x = n (any number);
+
+s = 0;
+
 for i = 0; i < x; i = i+1 : s = s + 1;
 
 
