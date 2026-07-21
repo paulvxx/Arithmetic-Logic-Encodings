@@ -12,7 +12,7 @@ s = 0;
 for i = 0; i < x; i = i+1 : s = s + 1;
 
 
-and prove that, say, x = (n^2 - n)/2. With the solver tool to be implemented, one can effectively write the code in a specific syntax, have it parsed, and generate a first order sentence that proves the correctness of the program and the property of it.
+and prove that, say, x = (n^2 - n)/2. With the solver tool to be implemented, one can effectively write the code in a specific syntax, have it parsed, and generate a first order sentence such that proving it is satisfiable proves the correctness of the program and the property of it.
 
 Read the journals for more information about the math behind how to translate any recursive/imperative program and a desired/specific property of it, into an equisatisfiable first order sentence.
 
