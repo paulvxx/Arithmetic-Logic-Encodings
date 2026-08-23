@@ -16,7 +16,7 @@ The main solution is to encode aperiodic behavior using diagonal lines on one oc
 
 At that point, relationships like P(a,b) = c can be converted to raw predicates by treating each number 0 through 12 as a truth value combination (i.e. for example, represening P(a,b) = 5 by not A(a,b) and B(a,b) and not C(a,b) and D(a,b)) or by a designated predicate that is mutually exclusive with other predicates, and applying De-Morgan's Laws (for the first conversion  more so) can restore the formula back into CNF.
 
-### Dynamically Expanding Cycles
+### Initial Diagonal Cycles
 
 Since the origin cannot be unique, we cannot rely on a starting case that outwardly expands itself at point (0,0) on the plane N^2. 
 Instead, we can translate the starting pivot to an infinitely periodic alternating cycle along the main diagonal. 
@@ -59,7 +59,38 @@ A cycle character on the right (second cycle) along with the cycle character on 
 
 Iterating across cycle sequence members in this manner from the relative beginning to relative end of both cycles will yield all locally present horizontal or vertical adjacency rules that must be captured.
 
+Each time a rule is derived per iteration, it should be stored in a key (antecedent) / value (possible consequents) table, where the values are interpreted as a set of options (necessary for different local contexts).
 
+The key-value mapping table should be resued across diagonal sequence (d_i) calculations for a large enough number of runs, so that local or edge case cycles are fully exhaused.
 
-## Programs 
+## Dynamically Expanding Cycles
+
+The dynamic computational patterns account for the remaining sequence values d_i (i > 1) and make use of the remaining 8 (5,6,7,8,9,10,11,12) tiles. Each iteration consists of two phases, and can be iterated as long as needed.
+
+Let the term d_2 = (5, 6, 7, 8). Algoritmically the same concept can be applied (lining up d_1 and d_2 together) so that horizontal and vertical edge constraints can be collected.
+
+Moving forward, the 2-phase computational run works as follows:
+
+STEP 1
+
+The beginning assumption or invariant assumes that the cycle d_i contains dynamic tiles (5,6,7,8). Or equivalently, i is even. 
+
+The first step is rather simple, and consists of applying a bijective mapping f: 5 -> 9, 6 -> 10, 7 -> 11, 8 -> 12 to d_i to obtain the next cycle d_{i+1}.
+
+STEP 2
+
+The second step requires a few more operations. Let g and h denote the following mappings:
+
+g: 9 -> 5, 10 -> 5, 11 -> 5, 12 -> 6
+h: 9 -> 7, 10 -> 7, 11 -> 7, 12 -> 8
+
+Apply both g and h to to d_{i+1}. Let u and v be the results of applying those mappings respectively. 
+
+Either concatenate both u and v together or v and u together. This introduces a non-deterministic choice, but nonetheless the dynamic structure and required implication rules will remain the same at the end.
+
+Expand out d_{i+1} to match the length of the newly concatenated uv (or likewise vu) cycle, and apply the implicaiton-finding walk-through iteration method to the expanded d_{i+1} and uv or vu. 
+
+Take either uv or vu to be the next cycle term of d_{i+1}, and repeat STEP 1.
+
+## Program PseudoCode
 
