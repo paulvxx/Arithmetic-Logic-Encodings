@@ -94,3 +94,90 @@ Take either uv or vu to be the next cycle term of d_{i+1}, and repeat STEP 1.
 
 ## Program PseudoCode
 
+
+### Variables / storage
+number_of_iterations = (some number)
+horizontal_implication_list = [new map structure]
+vertical_implication_list = [new map structure]
+diagonal_cycle_sequence = [list holding all previous diagonal sequence terms d_i]
+total_states = [0,1,2,3,4,5,6,7,8,9,10,11,12] (Optional, but useful to work with)
+current_cycle = [5,6,7,8]  (initial first dynamic cycle)
+next_cycle = []    (dynamically build the next cycle in the sequence)
+
+### Initial setup
+Store the implication maps 
+horizontal_implication_list[1] : list : [3]
+horizontal_implication_list[2] : list : [4]
+horizontal_implication_list[3] : list : [5,7]
+horizontal_implication_list[4] : list : [6,8]
+
+vertical_implication_list[0] : list : [0]
+vertical_implication_list[1] : list : [0]
+vertical_implication_list[2] : list : [0]
+vertical_implication_list[3] : list : [2]
+vertical_implication_list[4] : list : [1]
+vertical_implication_list[5] : list : [4]
+vertical_implication_list[6] : list : [3]
+vertical_implication_list[7] : list : [4]
+vertical_implication_list[8] : list : [3]
+
+diagonal_cycle_sequence = [
+    [1,2],
+    [3,4],
+    [5,6,7,8]
+]
+
+### Useful maps
+
+p1 = [5:9, 6:10, 7:11, 8:12]
+
+p2f = [9:5, 10:5, 11:5, 12:6]
+p2g = [9:7, 10:7, 11:7, 12:8]
+
+### Main cycle loop
+
+for it = 0,1,...number_of_iterations:
+    (phase 1 update)
+    next_cycle = []
+    for i in length of current_cycle - 1:
+        next_cycle[i] = p1[current_cycle[i]]
+
+    (add the relevant implications)    
+    for index in 0,1,...length of next_cycle-1:
+    add next_cycle[index] to horizontal_implication_list[current_cycle[index]] 
+    if index != next_cycle-1:
+        add current_cycle[index + 1] to vertical_implication_list[next_cycle[index]] 
+    else:
+	    add current_cycle[0] to vertical_implication_list[next_cycle[index]] 
+
+    (update the next cycle)
+	current_cycle = next_cycle
+	add current_cycle as the next element to diagonal_cycle_sequence
+    next_cycle = []
+
+    (phase 2)
+
+    (apply different mappings to the current cycle)
+    next_cycle_1 = []
+    next_cycle_2 = []
+    for i in length of current_cycle - 1:
+        next_cycle_1[i] = p2f[current_cycle[i]]
+        next_cycle_2[i] = p2g[current_cycle[i]]
+    
+    (concatenate the copied current cycle with itself)
+    current_cycle_extended = current_cycle + copy(current_cycle)
+
+    (concatenate the two cycle mapping transformations together (order doesn't matter))
+    next_cycle = next_cycle_1 + next_cycle_2
+
+    (add the relevant implications)    
+    for index in 0,1,...length of next_cycle-1:
+    add next_cycle[index] to horizontal_implication_list[current_cycle_extended[index]] 
+    if index != next_cycle-1:
+        add current_cycle_extended[index + 1] to vertical_implication_list[next_cycle[index]] 
+    else:
+	    add current_cycle_extended[0] to vertical_implication_list[next_cycle[index]] 
+
+    (update the next cycle)
+	current_cycle = next_cycle
+	add current_cycle as the next element to diagonal_cycle_sequence
