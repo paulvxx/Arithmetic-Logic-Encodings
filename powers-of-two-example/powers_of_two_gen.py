@@ -1,5 +1,6 @@
 """
-A cycle/sequence enumeration routine that  
+A cycle/sequence enumeration routine that enumerates
+aperiodic increasing powers of two cycles 
 """
 def print_powers_of_two_cycle(full_iters : int):
     horizontal_implications = {1:{3}, 
@@ -92,3 +93,5 @@ def print_powers_of_two_cycle(full_iters : int):
         print(f" Horizontal : {horizontal_implications} ")
         print(f" Vertical : {vertical_implications} ")
         print("-----------------------------")
+
+
