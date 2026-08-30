@@ -1,3 +1,5 @@
+from ..utils import add_implication_to_list
+
 """
 A cycle/sequence enumeration routine that enumerates
 aperiodic increasing powers of two cycles 
@@ -6,15 +8,7 @@ def print_powers_of_two_cycle(full_iters : int):
     horizontal_implications = {1:{3}, 
                                2:{4}, 
                                3:{5,7}, 
-                               4:{6,8}, 
-                               5:set(), 
-                               6:set(),
-                               7:set(),
-                               8:set(),
-                               9:set(),
-                               10:set(),
-                               11:set(),
-                               12:set()
+                               4:{6,8}
                                }
     vertical_implications = {0:{0}, 
                              1:{0}, 
@@ -24,11 +18,7 @@ def print_powers_of_two_cycle(full_iters : int):
                              5:{4}, 
                              6:{3}, 
                              7:{4}, 
-                             8:{3},
-                             9:set(),
-                             10:set(),
-                             11:set(),
-                             12:set()
+                             8:{3}
                              }
     diagonal_sequences = [
         [1,2],
@@ -54,11 +44,11 @@ def print_powers_of_two_cycle(full_iters : int):
 
         # read off implications
         for i in range(clen):
-            horizontal_implications[current_sequence[i]].add(next_sequence[i])
+            add_implication_to_list(horizontal_implications, current_sequence[i], next_sequence[i])
             if i == clen-1:
-                vertical_implications[next_sequence[i]].add(current_sequence[0])
+                add_implication_to_list(vertical_implications, next_sequence[i], 0)
             else:
-                vertical_implications[next_sequence[i]].add(current_sequence[i+1])
+                add_implication_to_list(vertical_implications, next_sequence[i], current_sequence[i+1])
 
         # store the next value in the diagonal sequence list
         diagonal_sequences.append(next_sequence)
@@ -81,11 +71,11 @@ def print_powers_of_two_cycle(full_iters : int):
 
         # read off implications
         for i in range(clen):
-            horizontal_implications[current_sequence_extended[i]].add(next_sequence[i])
+            add_implication_to_list(horizontal_implications, current_sequence_extended[i], next_sequence[i])
             if i == clen-1:
-                vertical_implications[next_sequence[i]].add(current_sequence_extended[0])
+                add_implication_to_list(vertical_implications, next_sequence[i], 0)
             else:
-                vertical_implications[next_sequence[i]].add(current_sequence_extended[i+1])
+                add_implication_to_list(vertical_implications, next_sequence[i], current_sequence_extended[i+1])
 
         # store the next value in the diagonal sequence list
         diagonal_sequences.append(next_sequence)
