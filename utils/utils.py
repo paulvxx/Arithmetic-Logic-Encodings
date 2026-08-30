@@ -10,7 +10,7 @@ def add_implication_to_list(ilist : list, key, value):
     else:
         ilist[key].add(value)
 
-def implication_list_to_cnf_AEA(h_implication_list, v_implication_list, conversion="mutually_disjoint"):
+def implication_list_to_cnf_AEA(h_implication_list, v_implication_list, explicit_disjoint=True):
     """
     Converts a list of adjacency implications (key-value dictionary) to 
     a representation format of conjunctions of disjunctions
@@ -35,6 +35,10 @@ def implication_list_to_cnf_AEA(h_implication_list, v_implication_list, conversi
         clauses.append(clause)
 
     # mutually exclusive predicates conditions
+    if not explicit_disjoint:
+        # avoid listing out the mutually disjoint conditions 
+        return clauses
+    
     predicates = set(h_implication_list.keys()).union(set(v_implication_list.keys()))
     # iterate through all unordered distinct pairs (a,b) of all predicates (a != b)
     while len(predicates) != 0:

@@ -5,6 +5,39 @@ A cycle/sequence enumeration routine that enumerates
 aperiodic increasing powers of two cycles 
 """
 def gen_powers_of_two_cycle_model(full_iters : int):
+    """
+    A cycle/sequence enumeration routine that generates dynamically expanding, 
+    aperiodic cycles to encode powers of two for origin-less computation on a 
+    2-D grid.
+    
+    When the total number of required states (or tiles) to represent this 
+    exponential growth is initially unknown in general, this routine serves as a discovery tool. 
+    By running the deterministic expansion for a sufficient number of iterations, 
+    it exhausts all early-developing dynamic cases and tracks emergent global 
+    behavior. This seamlessly determines the necessary state count and 
+    constructs the final first-order logical formula (adjacency implications) 
+    required for the model.
+    
+    Algorithm Phases:
+        - Phase 1: Applies a bijective structural mapping to the current dynamic 
+          cycle, transitioning the base states into a set of auxiliary/transitional 
+          states
+        - Phase 2: Applies branching non-deterministic mappings to the auxiliary 
+          states and concatenates the results. This explicitly doubles 
+          the sequence length per iteration, capturing the powers-of-two exponential 
+          growth
+
+    Args:
+        full_iters (int): The number of iterations to perform of the dynamic 
+                          cycle expansion.
+
+    Returns:
+        tuple: A tuple containing two dictionaries representing the final formula:
+            - horizontal_implications (dict): Maps a given state to a set of 
+              valid horizontally adjacent states
+            - vertical_implications (dict): Maps a given state to a set of 
+              valid vertically adjacent states
+    """
     horizontal_implications = {1:{3}, 
                                2:{4}, 
                                3:{5,7}, 
@@ -37,7 +70,7 @@ def gen_powers_of_two_cycle_model(full_iters : int):
     clen = 4
 
     for _ in range(full_iters):
-        print(f"Current Sequence : {current_sequence}")
+        #print(f"Current Sequence : {current_sequence}")
         next_sequence = []
         for i in range(clen):
             next_sequence.append(m1[current_sequence[i]])
@@ -82,10 +115,10 @@ def gen_powers_of_two_cycle_model(full_iters : int):
         current_sequence = next_sequence
         next_sequence = []
 
-        print(f"New Sequence : {current_sequence}")
-        print("Updated Implication List : ")
-        print(f" Horizontal : {horizontal_implications} ")
-        print(f" Vertical : {vertical_implications} ")
-        print("-----------------------------")
+        #print(f"New Sequence : {current_sequence}")
+        #print("Updated Implication List : ")
+        #print(f" Horizontal : {horizontal_implications} ")
+        #print(f" Vertical : {vertical_implications} ")
+        #print("-----------------------------")
 
-        return (horizontal_implications, vertical_implications)
+    return (horizontal_implications, vertical_implications)
