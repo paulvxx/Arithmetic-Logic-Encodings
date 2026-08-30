@@ -40,13 +40,35 @@ def read_implications_from_diagonals(horizontal_implications : dict, vertical_im
             add_implication_to_list(vertical_implications, n_expanded[i], c_expanded[0])
         else:
             add_implication_to_list(vertical_implications, n_expanded[i], c_expanded[i+1])
-    
+
+def get_state_count_adj_mappings(h_implication_list, v_implication_list):
+    """
+    Shorthand utility for obtaining a total count of the number of states or predicates present
+    in an implication mapping format (as dictionaries) in adjacency-mapping form
+    """
+    present_states = set()
+    present_states = present_states.union(set(h_implication_list.keys()))
+    present_states = present_states.union(set(v_implication_list.keys()))
+
+    horizontal_value_set = set()
+    for h in h_implication_list.keys(): horizontal_value_set = horizontal_value_set.union(h)
+    present_states = present_states.union(horizontal_value_set)
+
+    vertical_value_set = set()
+    for v in v_implication_list.keys(): vertical_value_set = vertical_value_set.union(v)
+    present_states = present_states.union(vertical_value_set)
+
+    # total number of states / mutually-disjoint predicates
+    return len(present_states)
+
 
 def implication_list_to_cnf_AEA(h_implication_list, v_implication_list, explicit_disjoint=True):
     """
     Converts a list of adjacency implications (key-value dictionary) to 
     a representation format of conjunctions of disjunctions
     (conjunctive normal form) ∀x∃y∀z P(x,y,z) where P is quantifier-free
+    One might wish to rely on an implied assumption that two predicates never overlap 
+    (set explicit_disjoint = False if this is the case)
     """
     clauses = []
 
