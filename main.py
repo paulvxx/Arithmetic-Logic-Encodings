@@ -14,7 +14,6 @@ print(f"Number of State Combinations present : {utils.get_state_count_adj_mappin
 # add starting predicate condition
 cnf_format = [[(1,'a','a',True)]]
 cnf_format.extend(utils.implication_list_to_cnf_AEA(h_iList, v_iList, explicit_disjoint=False))
-print(cnf_format)
 
 formula_str = fol_string_encoder.to_fol_cnf_formula(cnf_format, add_exists_front=True, pretty=True)
 print(formula_str)
