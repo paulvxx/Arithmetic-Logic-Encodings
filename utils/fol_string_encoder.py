@@ -27,7 +27,7 @@ def format_literal(literal_tuple, capitalize_first_only=False):
     return f"{negation}{pred_str}({arg1},{arg2})"
 
 
-def to_fol_cnf_formula(clauses, wrap_single=False, pretty=False):
+def to_fol_cnf_formula(clauses, add_exists_front=False, wrap_single=False, pretty=False):
     """
     Converts a list of list of 4-tuples into a First-Order Logic formula in the AEA prefix class.
     
@@ -35,6 +35,8 @@ def to_fol_cnf_formula(clauses, wrap_single=False, pretty=False):
     -----------
     clauses : list of list of tuple
         The input clauses, where each clause is a list of 4-tuples.
+    add_exists_front : bool, default False
+        Whether or not a leading existential symbol (∃a) should be added to assert a starting condition 
     wrap_single : bool, default False
         Whether to wrap single-literal clauses in parentheses, e.g., (P_5(z,x)) instead of P_5(z,x).
     pretty : bool, default False
@@ -47,7 +49,8 @@ def to_fol_cnf_formula(clauses, wrap_single=False, pretty=False):
     """
     if not clauses:
         return "∀x∃y∀z { True }"
-        
+    
+    exists_front = "∃a" if add_exists_front else ""
     clause_strings = []
     for clause in clauses:
         literals = [format_literal(lit) for lit in clause]
@@ -63,8 +66,8 @@ def to_fol_cnf_formula(clauses, wrap_single=False, pretty=False):
         # Multi-line pretty-printed output
         indent = "  "
         joined_clauses = f"\n{indent}&& ".join(clause_strings)
-        return f"∀x∃y∀z {{\n{indent}{joined_clauses}\n}}"
+        return f"{exists_front}∀x∃y∀z {{\n{indent}{joined_clauses}\n}}"
     else:
         # Single-line output
         joined_clauses = " && ".join(clause_strings)
-        return f"∀x∃y∀z {{ {joined_clauses} }}"
+        return f"{exists_front}∀x∃y∀z {{ {joined_clauses} }}"
