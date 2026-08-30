@@ -1,4 +1,4 @@
-from ..utils import add_implication_to_list
+from utils.utils import add_implication_to_list
 
 """
 A cycle/sequence enumeration routine that enumerates
@@ -46,7 +46,7 @@ def print_powers_of_two_cycle(full_iters : int):
         for i in range(clen):
             add_implication_to_list(horizontal_implications, current_sequence[i], next_sequence[i])
             if i == clen-1:
-                add_implication_to_list(vertical_implications, next_sequence[i], 0)
+                add_implication_to_list(vertical_implications, next_sequence[i], current_sequence[0])
             else:
                 add_implication_to_list(vertical_implications, next_sequence[i], current_sequence[i+1])
 
@@ -73,7 +73,7 @@ def print_powers_of_two_cycle(full_iters : int):
         for i in range(clen):
             add_implication_to_list(horizontal_implications, current_sequence_extended[i], next_sequence[i])
             if i == clen-1:
-                add_implication_to_list(vertical_implications, next_sequence[i], 0)
+                add_implication_to_list(vertical_implications, next_sequence[i], current_sequence[0])
             else:
                 add_implication_to_list(vertical_implications, next_sequence[i], current_sequence_extended[i+1])
 
@@ -88,5 +88,4 @@ def print_powers_of_two_cycle(full_iters : int):
         print(f" Vertical : {vertical_implications} ")
         print("-----------------------------")
 
-
-print_powers_of_two_cycle(4)
+        return (horizontal_implications, vertical_implications)
