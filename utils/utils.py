@@ -10,35 +10,44 @@ def add_implication_to_list(ilist : list, key, value):
     else:
         ilist[key].add(value)
 
-def implication_list_to_cnf(h_implication_list, v_implication_list, conversion="mutually_disjoint"):
+def implication_list_to_cnf_AEA(h_implication_list, v_implication_list, conversion="mutually_disjoint"):
     """
     Converts a list of adjacency implications (key-value dictionary) to 
     a representation format of conjunctions of disjunctions
     (conjunctive normal form) ∀x∃y∀z P(x,y,z) where P is quantifier-free
     """
-    predicates = set(h_implication_list.keys()).union(set(v_implication_list.keys()))
     clauses = []
 
-    # horizontal implications
+    # horizontal implication clauses
     for h in h_implication_list.keys():
+        # demorgan's laws applied to the antecedent
         clause = [(h,'z','x',False)]
         for adj in h_implication_list[h]:
             clause.append((adj,'z','y',True))
         clauses.append(clause)
 
-    # vertical implications
+    # vertical implication clauses
     for v in v_implication_list.keys():
+        # demorgan's laws applied to the antecedent
         clause = [(v,'x','z',False)]
         for adj in v_implication_list[v]:
             clause.append((adj,'y','z',True))
         clauses.append(clause)
 
     # mutually exclusive predicates conditions
-    for p in predicates:
-        for q in predicates:
-            if p != q:
-                clause = [(p,'x','z',False), (q,'x','z',False)]
-                clauses.append(clause)
-
+    predicates = set(h_implication_list.keys()).union(set(v_implication_list.keys()))
+    # iterate through all unordered distinct pairs (a,b) of all predicates (a != b)
+    while len(predicates) != 0:
+        # select any predicate from the set it if is not empty
+        p = next(iter(predicates))
+        remaining = predicates.copy()
+        # remove it from the set of remaining predicates
+        remaining.difference_update({p})
+        for r in remaining:
+            clause = [(p,'x','z',False), (r,'x','z',False)]
+            clauses.append(clause)
+        # iterate through the next loop
+        predicates = remaining
+            
     # return the CNF format of predicate logical formulas
     return clauses
