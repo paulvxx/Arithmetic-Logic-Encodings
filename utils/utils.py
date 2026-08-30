@@ -1,3 +1,5 @@
+import math
+
 """
 Shorthand utility to add implication to list
 """
@@ -9,6 +11,44 @@ def add_implication_to_list(ilist : list, key, value):
         ilist[key] = {value}
     else:
         ilist[key].add(value)
+
+def read_implications_from_diagonals(horizontal_implications : dict, vertical_implications : dict, 
+            current_line : list, next_line : list):
+    """
+    Helper routine to extract implications from two lists representing cycles along diagonal lines
+    """
+    c_len = len(current_line)
+    n_len = len(next_line)
+    # if either list is empty, raise an exception
+    if (c_len * n_len) == 0:
+        raise ValueError("Error : Cycle lists must be non-empty")
+
+    c_expanded = current_line
+    n_expanded = next_line
+    cycle_length = c_len
+    # if the lengths are not equal, expand the cycles continuously (least common multiple) until the periods match
+    if c_len != n_len:
+        cycle_length = math.lcm(c_len, n_len)
+        # calculate number of times each cycle has to be extended
+        c_repetitions = cycle_length // c_len
+        n_repetitions = cycle_length // n_len
+        c_expanded = []
+        n_expanded = []
+        # expand the first cycle
+        for _ in range(c_repetitions):
+            c_expanded.extend(current_line)
+        # expand the second cycle:
+        for _ in range(n_repetitions):
+            n_expanded.extend(next_line)
+
+    # read off implications
+    for i in range(cycle_length):
+        add_implication_to_list(horizontal_implications, c_expanded[i], n_expanded[i])
+        if i == cycle_length-1:
+            add_implication_to_list(vertical_implications, n_expanded[i], c_expanded[0])
+        else:
+            add_implication_to_list(vertical_implications, n_expanded[i], c_expanded[i+1])
+    
 
 def implication_list_to_cnf_AEA(h_implication_list, v_implication_list, explicit_disjoint=True):
     """

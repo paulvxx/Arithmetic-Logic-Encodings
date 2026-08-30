@@ -1,4 +1,4 @@
-from utils.utils import add_implication_to_list
+from utils.utils import read_implications_from_diagonals
 
 """
 A cycle/sequence enumeration routine that enumerates
@@ -76,25 +76,25 @@ def gen_powers_of_two_cycle_model(full_iters : int):
             next_sequence.append(m1[current_sequence[i]])
 
         # read off implications
-        for i in range(clen):
-            add_implication_to_list(horizontal_implications, current_sequence[i], next_sequence[i])
-            if i == clen-1:
-                add_implication_to_list(vertical_implications, next_sequence[i], current_sequence[0])
-            else:
-                add_implication_to_list(vertical_implications, next_sequence[i], current_sequence[i+1])
+        read_implications_from_diagonals(
+            horizontal_implications, 
+            vertical_implications,
+            current_sequence,
+            next_sequence
+        )
 
         # store the next value in the diagonal sequence list
         diagonal_sequences.append(next_sequence)
         current_sequence = next_sequence
         next_sequence = []
 
+        # obtain the next sequence by applying two mappings 
+        # and concatenating the result
         next_sequence_1 = []
         next_sequence_2 = []
-        current_sequence_extended = current_sequence + current_sequence
         for i in range(clen):
             next_sequence_1.append(m2[current_sequence[i]])
             next_sequence_2.append(m3[current_sequence[i]])
-            current_sequence_extended.append(current_sequence[i])
 
         # order doesn't matter
         next_sequence = next_sequence_1 + next_sequence_2
@@ -103,12 +103,12 @@ def gen_powers_of_two_cycle_model(full_iters : int):
         clen *= 2
 
         # read off implications
-        for i in range(clen):
-            add_implication_to_list(horizontal_implications, current_sequence_extended[i], next_sequence[i])
-            if i == clen-1:
-                add_implication_to_list(vertical_implications, next_sequence[i], current_sequence[0])
-            else:
-                add_implication_to_list(vertical_implications, next_sequence[i], current_sequence_extended[i+1])
+        read_implications_from_diagonals(
+            horizontal_implications, 
+            vertical_implications,
+            current_sequence,
+            next_sequence
+        )
 
         # store the next value in the diagonal sequence list
         diagonal_sequences.append(next_sequence)
