@@ -4,7 +4,7 @@ from utils.utils import add_implication_to_list
 A cycle/sequence enumeration routine that enumerates
 aperiodic increasing powers of two cycles 
 """
-def print_powers_of_two_cycle(full_iters : int):
+def gen_powers_of_two_cycle_model(full_iters : int):
     horizontal_implications = {1:{3}, 
                                2:{4}, 
                                3:{5,7}, 
