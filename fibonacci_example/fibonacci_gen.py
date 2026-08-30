@@ -1,4 +1,4 @@
-from utils.utils import add_implication_to_list
+from utils.utils import read_implications_from_diagonals
 
 """
 A cycle/sequence enumeration routine that enumerates
@@ -34,39 +34,126 @@ def gen_fibonacci_encoding_model(full_iters : int):
     ]
     current_sequence = ["A","D","E","F"]
 
-    # relevant mapping tables
-    m1 = {}
-    m2 = {}
+    # relevant character mapping tables for cycle doubling
+    m1 = {"G":"A", "H":"B", "I":"C", "J":"D"}
+    m2 = {"G":"E", "H":"E", "I":"E", "J":"F"}
 
     # current sequence length
     clen = 4
 
     for _ in range(full_iters):
         #print(f"Current Sequence : {current_sequence}")
+        # Phase 1 , transition from primitive states A-F to adjacent two string representations
         next_sequence = []
-        for i in range(clen):
-            next_sequence.append(m1[current_sequence[i]])
+        for index in range(clen):
+            if index != clen-1: 
+                next_sequence[index] = current_sequence[index] + current_sequence[index+1]
+            else: 
+                next_sequence[index] = current_sequence[index] + current_sequence[0]
 
         # read off implications
-        for i in range(clen):
-            add_implication_to_list(horizontal_implications, current_sequence[i], next_sequence[i])
-            if i == clen-1:
-                add_implication_to_list(vertical_implications, next_sequence[i], current_sequence[0])
-            else:
-                add_implication_to_list(vertical_implications, next_sequence[i], current_sequence[i+1])
+        read_implications_from_diagonals(
+            horizontal_implications, 
+            vertical_implications,
+            current_sequence,
+            next_sequence
+        )
 
         # store the next value in the diagonal sequence list
         diagonal_sequences.append(next_sequence)
         current_sequence = next_sequence
         next_sequence = []
 
+        # Phase 2-3 Loop (rotation alignment)
+        jump_to_phase_4 = False
+
+        while not jump_to_phase_4:
+            # Assume we are at phase 2 at the beginning of the while loop
+            # neither "AF" nor "BF" (implying the cycles are fully rotated) are 
+            # in the current cycle sequence so rotation needs to continue
+            # For First-Order control flow to hold, it is good to note that 
+            # we would specify this using the presence of predicate/state pairs "CF", "DF", and "EF"
+            # rather than the absense of pairs "AF" and "BF" 
+            # since one-way implications (P --> Q) are generally insufficient to control negation
+            # behavior ~P. (i.e. you would need more fine-grained logic (P --> Q) && (~P --> R) && ~(Q && R))
+            if not len({"AF","BF"}.intersection(set(current_sequence))):
+                # Type 2 to Type 3
+                for index in range(clen):
+                    if index != clen-1: 
+                        next_sequence[index] = current_sequence[index] + current_sequence[index+1]
+                    else: 
+                        next_sequence[index] = current_sequence[index] + current_sequence[0]
+
+                read_implications_from_diagonals(
+                    horizontal_implications, 
+                    vertical_implications,
+                    current_sequence,
+                    next_sequence
+                )
+
+                diagonal_sequences.append(next_sequence)
+                current_sequence = next_sequence
+                next_sequence = []
+
+                # Type 3 to Type 2
+                for index in range(clen):
+                    # apply the mapping to string xyzw --> xw
+                    # retrieve the first and last characters 
+                    # then concatenate them
+                    first = current_sequence[index][0]
+                    last = current_sequence[index][3]
+                    next_sequence.append(str(first + last))
+
+                read_implications_from_diagonals(
+                    horizontal_implications, 
+                    vertical_implications,
+                    current_sequence,
+                    next_sequence
+                )
+
+                diagonal_sequences.append(next_sequence)
+                current_sequence = next_sequence
+                next_sequence = []
+            # Rotation has finished, here
+            else:
+                jump_to_phase_4 = True
+
+        # Phase 2 --> Phase 4
+        # map rotated cycles to first characters Fibonacci expansions
+        for index in range(clen):
+            # retrieve first and last characters
+            first = current_sequence[index][0]
+            last = current_sequence[index][1]
+            # map rotational alignments to Phase 4 characters
+            if first=='A' or last=='B':
+                next_sequence[index] = "G"
+            elif last=='A':
+                next_sequence[index] = "H"                
+            elif first=='F':
+                next_sequence[index] = "J"
+            else:
+                next_sequence[index] = "I"
+
+        read_implications_from_diagonals(
+            horizontal_implications, 
+            vertical_implications,
+            current_sequence,
+            next_sequence
+        )
+
+        diagonal_sequences.append(next_sequence)
+        current_sequence = next_sequence
+        next_sequence = []
+
+        # Phase 4 --> Phase 1
+        # obtain the next sequence by applying two mappings and
+        # concatenate the results
+        # doubling phase
         next_sequence_1 = []
         next_sequence_2 = []
-        current_sequence_extended = current_sequence + current_sequence
         for i in range(clen):
-            next_sequence_1.append(m2[current_sequence[i]])
-            next_sequence_2.append(m3[current_sequence[i]])
-            current_sequence_extended.append(current_sequence[i])
+            next_sequence_1.append(m1[current_sequence[i]])
+            next_sequence_2.append(m2[current_sequence[i]])            
 
         # order doesn't matter
         next_sequence = next_sequence_1 + next_sequence_2
@@ -75,12 +162,12 @@ def gen_fibonacci_encoding_model(full_iters : int):
         clen *= 2
 
         # read off implications
-        for i in range(clen):
-            add_implication_to_list(horizontal_implications, current_sequence_extended[i], next_sequence[i])
-            if i == clen-1:
-                add_implication_to_list(vertical_implications, next_sequence[i], current_sequence[0])
-            else:
-                add_implication_to_list(vertical_implications, next_sequence[i], current_sequence_extended[i+1])
+        read_implications_from_diagonals(
+            horizontal_implications, 
+            vertical_implications,
+            current_sequence,
+            next_sequence
+        )
 
         # store the next value in the diagonal sequence list
         diagonal_sequences.append(next_sequence)
@@ -92,5 +179,6 @@ def gen_fibonacci_encoding_model(full_iters : int):
         #print(f" Horizontal : {horizontal_implications} ")
         #print(f" Vertical : {vertical_implications} ")
         #print("-----------------------------")
+
 
     return (horizontal_implications, vertical_implications)

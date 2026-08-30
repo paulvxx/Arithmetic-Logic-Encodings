@@ -29,17 +29,9 @@ def read_implications_from_diagonals(horizontal_implications : dict, vertical_im
     # if the lengths are not equal, expand the cycles continuously (least common multiple) until the periods match
     if c_len != n_len:
         cycle_length = math.lcm(c_len, n_len)
-        # calculate number of times each cycle has to be extended
-        c_repetitions = cycle_length // c_len
-        n_repetitions = cycle_length // n_len
-        c_expanded = []
-        n_expanded = []
-        # expand the first cycle
-        for _ in range(c_repetitions):
-            c_expanded.extend(current_line)
-        # expand the second cycle:
-        for _ in range(n_repetitions):
-            n_expanded.extend(next_line)
+        # expand the cycles to have matching lcm periods
+        c_expanded = current_line * (cycle_length // c_len)
+        n_expanded = next_line * (cycle_length // n_len)
 
     # read off implications
     for i in range(cycle_length):
