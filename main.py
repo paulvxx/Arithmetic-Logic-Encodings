@@ -3,9 +3,13 @@ Main python program to run scripts
 """
 
 from powers_of_two_example import powers_of_two_gen
+from fibonacci_example import fibonacci_gen
 from utils import utils, fol_string_encoder
 
-h_iList, v_iList = powers_of_two_gen.gen_powers_of_two_cycle_model(4)
+#h_iList, v_iList = powers_of_two_gen.gen_powers_of_two_cycle_model(5)
+h_iList, v_iList = fibonacci_gen.gen_fibonacci_encoding_model(10)
+
+print(f"Number of State Combinations present : {utils.get_state_count_adj_mappings(h_iList, v_iList)}")
 
 cnf_format = utils.implication_list_to_cnf_AEA(h_iList, v_iList, explicit_disjoint=False)
 

@@ -47,9 +47,9 @@ def gen_fibonacci_encoding_model(full_iters : int):
         next_sequence = []
         for index in range(clen):
             if index != clen-1: 
-                next_sequence[index] = current_sequence[index] + current_sequence[index+1]
+                next_sequence.append(current_sequence[index] + current_sequence[index+1])
             else: 
-                next_sequence[index] = current_sequence[index] + current_sequence[0]
+                next_sequence.append(current_sequence[index] + current_sequence[0])
 
         # read off implications
         read_implications_from_diagonals(
@@ -80,9 +80,9 @@ def gen_fibonacci_encoding_model(full_iters : int):
                 # Type 2 to Type 3
                 for index in range(clen):
                     if index != clen-1: 
-                        next_sequence[index] = current_sequence[index] + current_sequence[index+1]
+                        next_sequence.append(current_sequence[index] + current_sequence[index+1])
                     else: 
-                        next_sequence[index] = current_sequence[index] + current_sequence[0]
+                        next_sequence.append(current_sequence[index] + current_sequence[0])
 
                 read_implications_from_diagonals(
                     horizontal_implications, 
@@ -125,14 +125,14 @@ def gen_fibonacci_encoding_model(full_iters : int):
             first = current_sequence[index][0]
             last = current_sequence[index][1]
             # map rotational alignments to Phase 4 characters
-            if first=='A' or last=='B':
-                next_sequence[index] = "G"
+            if first=='A' or first=='B':
+                next_sequence.append("G")
             elif last=='A':
-                next_sequence[index] = "H"                
+                next_sequence.append("H")                
             elif first=='F':
-                next_sequence[index] = "J"
+                next_sequence.append("J")
             else:
-                next_sequence[index] = "I"
+                next_sequence.append("I")
 
         read_implications_from_diagonals(
             horizontal_implications, 
@@ -179,6 +179,5 @@ def gen_fibonacci_encoding_model(full_iters : int):
         #print(f" Horizontal : {horizontal_implications} ")
         #print(f" Vertical : {vertical_implications} ")
         #print("-----------------------------")
-
 
     return (horizontal_implications, vertical_implications)

@@ -2,7 +2,7 @@
 Utilities for encoding functions from structural format to string-formulas
 """
 
-def format_literal(literal_tuple):
+def format_literal(literal_tuple, capitalize_first_only=False):
     """
     Converts a single 4-tuple format (predicate_id, arg1, arg2, sign) into a string literal.
 
@@ -15,7 +15,10 @@ def format_literal(literal_tuple):
     if isinstance(pred, int):
         pred_str = f"P_{pred}"
     elif isinstance(pred, str):
-        pred_str = f"{pred.capitalize()}"
+        if capitalize_first_only: 
+            pred_str = f"{pred.capitalize()}"
+        else:
+            pred_str = f"{pred.upper()}"
     else:
         raise TypeError("Error : Predicate symbol must either be a String or Integer.")
     
