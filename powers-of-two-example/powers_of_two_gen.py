@@ -43,10 +43,11 @@ def print_powers_of_two_cycle(full_iters : int):
     m2 = {9:5, 10:5, 11:5, 12:6}
     m3 = {9:7, 10:7, 11:7, 12:8}
 
+    # current sequence length
+    clen = 4
 
     for _ in range(full_iters):
         print(f"Current Sequence : {current_sequence}")
-        clen = len(current_sequence)
         next_sequence = []
         for i in range(clen):
             next_sequence.append(m1[current_sequence[i]])
@@ -75,6 +76,9 @@ def print_powers_of_two_cycle(full_iters : int):
         # order doesn't matter
         next_sequence = next_sequence_1 + next_sequence_2
 
+        # double sequence length count
+        clen *= 2
+
         # read off implications
         for i in range(clen):
             horizontal_implications[current_sequence_extended[i]].add(next_sequence[i])
@@ -95,3 +99,4 @@ def print_powers_of_two_cycle(full_iters : int):
         print("-----------------------------")
 
 
+print_powers_of_two_cycle(4)
